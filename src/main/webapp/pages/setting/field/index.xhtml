@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="../../../resources/template/template.xhtml">
+    <ui:define name="title">Bài Quiz</ui:define>
+    <ui:define name="body">
+
+        <div>
+            <f:metadata>
+                <f:event type="preRenderView" listener="#{FieldView.onLoad()}"/>
+            </f:metadata>
+        </div>
+        <div>
+            <h:form id="frmFieldToolBar">
+                <p:toolbar>
+                    <p:toolbarGroup align="right">
+                        <p:commandButton value="Tạo mới"
+                                         icon="pi pi-plus"
+                                         onclick="PF('wgvAddField').show()"
+                                         styleClass="mr-2 ui-button-success"/>
+                    </p:toolbarGroup>
+                </p:toolbar>
+            </h:form>
+            <h:form id="frmFieldTable">
+                <p:dataTable id="dt-quiz" widgetVar="dtQuiz" var="field"
+                             value="#{FieldView.fields}"
+                             stickyHeader="true"
+                >
+                    <p:column headerText="Mã">
+                        <h:outputText value="#{field.id}"/>
+                    </p:column>
+                    <p:column headerText="Tên">
+                        <h:outputText value="#{field.name}"/>
+                    </p:column>
+                    <p:column style="text-align: right">
+                        <p:commandButton icon="pi pi-trash"
+                                         update="@form"
+                                         action="#{FieldView.remove(field.id)}"
+                                         styleClass="ui-button-danger ui-button-flat">
+                            <p:confirm type="popup" header="Xác nhận" message="Bạn có muốn xóa lĩnh vực này"
+                                       icon="pi pi-exclamation-triangle"/>
+
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </div>
+        <p:dialog
+                header="Tạo mới"
+                widgetVar="wgvAddField"
+                width="300px"
+                modal="true">
+            <h:form id="frmFieldAdd">
+                <div class="ui-g-12 ui-fluid">
+                    <p:inputText value="#{FieldView.fieldAddName}">
+                        <p:ajax async="true"/>
+                    </p:inputText>
+                </div>
+
+            </h:form>
+            <f:facet name="footer">
+                <p:commandButton value="Hủy"/>
+                <p:commandButton value="Lưu"
+                                 update="frmFieldTable frmFieldAdd"
+                                 action="#{FieldView.add()}"/>
+            </f:facet>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

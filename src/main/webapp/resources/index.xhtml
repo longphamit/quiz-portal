@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="template/template.xhtml">
+    <ui:define name="title">Trang chủ</ui:define>
+    <ui:define name="body">
+        <style type="text/css">
+            body.layout-compact .ui-widget-content {
+                line-height: 25px;
+            }
+
+            body .ui-panel .ui-panel-titlebar + .ui-panel-content {
+                display: inline-block !important;
+                width: 100%;
+            }
+        </style>
+        <h:form>
+            <div class="ui-g">
+                <div class="ui-g-4">
+                    <div class="card ui-g-12">
+                        <div class="ui-g-6">
+                            Bài Quiz
+                        </div>
+                        <div class="ui-g-6" style="text-align: right">
+                            12
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-4">
+                    <div class="card ui-g-12">
+                        <div class="ui-g-6">
+                            Câu hỏi
+                        </div>
+                        <div class="ui-g-6" style="text-align: right">
+                            12
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-4">
+                    <div class="card ui-g-12">
+                        <div class="ui-g-6">
+                            Tài liệu
+                        </div>
+                        <div class="ui-g-6" style="text-align: right">
+                            12
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

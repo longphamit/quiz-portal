@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="../../resources/template/template.xhtml ">
+    <ui:define name="title">Kết quả khảo sát</ui:define>
+    <ui:define name="body">
+        <div>
+            <f:metadata>
+                <f:event type="preRenderView" listener="#{SurveyResultView.onLoad()}"/>
+            </f:metadata>
+        </div>
+        <div>
+            <div class="ui-g-5">
+                <div class="card ui-g ui-fluid" style="margin-bottom:10px">
+                    <h5>Kết quả #{SurveyResultView.quiz.name}</h5>
+                </div>
+                <div class="card ui-g ui-fluid"  style="margin-bottom:10px">
+                    <div class="ui-g-4">
+                        <h:outputText style="font-weight:bold" value="Loại khảo sát: "/>
+                    </div>
+                    <div class="ui-g-8">
+                        <h:outputText style="font-weight:bold" rendered="#{SurveyResultView.quiz.processType eq 'PAIR'}"
+                                      value="ƯU TIÊN CẶP ĐÔI"/>
+                    </div>
+                </div>
+                <div class="card ui-g ui-fluid"  style="margin-bottom:10px">
+
+                    <div class="ui-g-12">
+                        <h:outputText escape="false"
+                                      value="#{SurveyResultView.quiz.guide}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-g-3">
+                <p:panel style="margin-bottom:10px" header="Tổng số người tham gia">
+                    <h2>#{SurveyResultView.quiz.participantsLimit}</h2>
+                </p:panel>
+                <ui:repeat value="#{SurveyResultView.countResultSubmitSubjectModelList}" var="subject">
+                    <p:panel style="margin-bottom:10px"
+                             header="#{subject.quizSubject.name} - #{subject.quizSubject.key}" toggleable="true"
+                             styleClass="chart-dashlet">
+                        <h2>#{subject.count}</h2>
+                    </p:panel>
+                </ui:repeat>
+            </div>
+            <div class="ui-g-4">
+                <p:panel header="Tỷ lệ chọn giữa các mẫu vật" toggleable="true" styleClass="chart-dashlet">
+                    <p:pieChart
+
+                            model="#{SurveyResultView.subjectVoteChartModel}"/>
+                </p:panel>
+            </div>
+            <div class="ui-g-12">
+                <p:panel>
+                    <p:dataTable var="quizSubmit"
+                                 showGridlines="true"
+                                 rowIndexVar="rowIndexVar"
+                                 value="#{SurveyResultView.quizSubmits}">
+                        <p:ajax event="rowReorder"/>
+                        <p:column headerText="STT" style="width:5%">
+                            <h:outputText escape="false" value="#{rowIndexVar+1}"/>
+                        </p:column>
+                        <p:column headerText="Trật tự mẫu">
+                            <h:outputText escape="false"
+                                          value="#{SurveyResultView.questionTemplateMap[quizSubmit.questionAnswerSubmits[0].questionTemplateId].content}"/>
+                        </p:column>
+
+                        <p:column headerText="Mã hóa">
+                            <ui:repeat
+                                    value="#{SurveyResultView.questionTemplateMap[quizSubmit.questionAnswerSubmits[0].questionTemplateId].questionAnswerTemplates}"
+                                    var="answer">
+                                <h:outputText value=" [#{answer.key}] "/>
+                            </ui:repeat>
+                        </p:column>
+
+                        <p:column headerText="Trả lời">
+                            <ui:repeat value="#{quizSubmit.questionAnswerSubmits[0].submitKeys}" var="submitKey">
+                                <h:outputText value=" [#{submitKey}] "/>
+                            </ui:repeat>
+                        </p:column>
+
+                        <p:column headerText="Ghi chú">
+                            <ui:repeat value="#{quizSubmit.questionAnswerSubmits[0].submitKeys}" var="submitKey">
+                                <h:outputText value=" [#{SurveyResultView.quizSubjectCodeMap[submitKey].key}] "/>
+                            </ui:repeat>
+
+                        </p:column>
+
+                        <p:column headerText="Người làm khảo sát">
+                            <h:outputText value="#{SurveyResultView.partyMap[quizSubmit.submitPartyId].name}"/>
+                        </p:column>
+                        <p:column headerText="Ngày">
+                            <h:outputText value="#{quizSubmit.submitTime}">
+                                <f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="GMT+7"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Phiếu khảo sát">
+                            <p:commandLink value="Xem phiếu" action="#{SurveyResultView.viewSurveyResult(quizSubmit.id)}"/>
+                        </p:column>
+
+                    </p:dataTable>
+                </p:panel>
+
+            </div>
+
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  quiz-portal:
+    image: longphamjustdoit/quiz-portal
+    container_name: quiz-portal
+    ports:
+      - "8080:8080"
+    networks:
+      - longpc-network
+networks:
+  longpc-network:
+    external: true

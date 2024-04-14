@@ -1,0 +1,65 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:pu="http://primefaces.org/ultima"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        >
+    <f:metadata>
+
+    </f:metadata>
+    <h:form id="layoutMenuForm" prependId="false">
+        <style type="text/css">
+            .menu-parent a span.layout-menuitem-text {
+                font-size: 0.857rem;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+
+            a.menu-child span.layout-menuitem-text {
+                font-size: 14px;
+                font-weight: normal;
+                text-transform: none;
+            }
+
+            .title-text {
+                padding: 12px 8px 0 8px;
+                font-weight: bold;
+            }
+
+            .workspace {
+                min-width: 100% !important;
+                background: #fff !important;
+                border: none !important;
+                padding: 8px !important;
+                margin-top: 5px;
+            }
+        </style>
+        <div class="layout-menu-wrapper">
+
+            <div class="layout-menu-container" style="
+
+            margin-top: 3px;
+            padding-bottom: 100px;
+            height:100vh !important;
+
+">
+                <h:outputText styleClass="title-text" value="MENU"/><br/>
+
+                <pu:menu style="border-radius: 10px;" widgetVar="layoutMenuWidget" id="layoutMenuWidget">
+                    <p:menuitem icon="pi pi-desktop" url="/pages/quiz/index.xhtml" value="Bài Quiz"/>
+                    <p:menuitem icon = "pi pi-question" url="/pages/question-template/index.xhtml" value="Kho câu hỏi"/>
+                    <p:menuitem icon="pi pi-file" url="/pages/document/index.xhtml" value="Tài liệu"/>
+                    <p:submenu styleClass="menu-parent"  label="Cấu hình">
+                        <p:menuitem  styleClass="menu-child" value="Tags"/>
+                        <p:menuitem  styleClass="menu-child" url="/pages/setting/field/index.xhtml" value="Lĩnh vực"/>
+                        <p:menuitem  styleClass="menu-child" value="Loại câu hỏi"/>
+                    </p:submenu>
+                    <p:menuitem icon="pi pi-sign-out" url="/pages/logout/index.xhtml" value="Đăng xuất"/>
+                </pu:menu>
+            </div>
+        </div>
+    </h:form>
+</ui:composition>

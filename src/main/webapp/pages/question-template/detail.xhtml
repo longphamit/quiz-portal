@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="../../resources/template/template.xhtml ">
+    <ui:define name="title">Câu hỏi</ui:define>
+    <ui:define name="body">
+        <div>
+            <f:metadata>
+                <f:event type="preRenderView" listener="#{QuestionTemplateDetailView.onLoad()}"/>
+            </f:metadata>
+        </div>
+        <div class="ui-g">
+
+            <div class="ui-g-8">
+                <h:form id="frmData">
+                    <div class="ui-g card" style="margin-bottom: 0px !important;">
+                        <div class="ui-g-12">
+                            <div style="display: flex; justify-content: space-between;">
+                                <div style="display: flex; justify-content: flex-start">
+                                    <h5>Câu hỏi</h5>
+                                </div>
+                                <div style="display: flex; justify-content: flex-end">
+                                    <p:commandButton title="Xóa" icon="pi pi-trash"
+                                                     action="#{QuestionTemplateDetailView.removeQuestion()}"
+                                                     styleClass="ui-button-danger">
+                                        <p:confirm type="popup" header="Confirmation"
+                                                   message="Bạn có muốn xóa câu hỏi này?" icon="pi pi-info-circle"/>
+                                    </p:commandButton>
+                                </div>
+                            </div>
+                        </div>
+                        <pe:sunEditor id="tedrDescription"
+                                      mode="classic"
+                                      toolbar="[['save','fontSize','formatBlock','blockquote', 'bold', 'underline', 'italic','fontColor', 'hiliteColor', 'outdent', 'indent', 'align', 'horizontalRule', 'list', 'table']]"
+                                      value="#{QuestionTemplateDetailView.questionTemplate.content}">
+                            <p:ajax event="save" update="@form"
+                                    listener="#{QuestionTemplateDetailView.updateContent()}"/>
+                        </pe:sunEditor>
+                    </div>
+                </h:form>
+                <div class="ui-g" style="margin-top: 5px !important;">
+                    <div class="card ui-g-12">
+                        <div style="display: flex; justify-content: space-between;">
+                            <div style="display: flex; justify-content: flex-start">
+                                <h5>Đáp án đúng</h5>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end">
+                                <h:form>
+                                    <p:selectOneRadio style="width: 100px"
+                                                      value="#{QuestionTemplateDetailView.questionTemplate.questionAnswerTemplateResultId}">
+                                        <f:selectItems var="answer"
+                                                       value="#{QuestionTemplateDetailView.questionTemplate.questionAnswerTemplates}"
+                                                       itemValue="#{answer.id}"
+                                                       itemLabel="#{answer.keyLabel}"/>
+                                        <p:ajax event="change" update="@form" listener="#{QuestionTemplateDetailView.updateQuestionAnswerTemplateResultId()}"/>
+                                    </p:selectOneRadio>
+                                </h:form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g" style="margin-top: 5px">
+                    <ui:repeat varStatus="varStatus"
+                               value="#{QuestionTemplateDetailView.questionTemplate.questionAnswerTemplates}"
+                               var="answer">
+                        <div class="ui-g-6" style="padding:5px !important;">
+                            <div class="card ui-g-12">
+                                <h:form>
+                                    <p:panelGrid columns="2" layout="flex"
+                                                 columnClasses="col-12 md:col-3 xl:col-1, col-12 md:col-9 xl:col-11"
+                                                 contentStyleClass="align-items-baseline ui-fluid">
+                                        <p:outputLabel style="font-weight: bold; font-size: 20px"
+                                                       value="#{answer.keyLabel}"/>
+                                        <pe:sunEditor
+                                                mode="inline"
+                                                toolbar="[['save','fontSize','formatBlock','blockquote', 'bold', 'underline', 'italic','fontColor', 'hiliteColor', 'outdent', 'indent', 'align', 'horizontalRule', 'list', 'table']]"
+                                                value="#{answer.content}">
+                                            <p:ajax event="save" update="@form"
+                                                    listener="#{QuestionTemplateDetailView.updateAnswerContent(answer.id,varStatus.index)}"/>
+                                        </pe:sunEditor>
+
+                                    </p:panelGrid>
+                                </h:form>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </div>
+            </div>
+            <div class="ui-g-4">
+                <div class="card">
+                    <h:form>
+                        <p:panelGrid columns="2" layout="flex"
+                                     columnClasses="col-12 md:col-3 xl:col-, col-12 md:col-9 xl:col-9"
+                                     contentStyleClass="align-items-baseline ui-fluid">
+
+                            <p:outputLabel for="subject" value="Lĩnh vực"/>
+                            <p:selectOneMenu id="subject">
+                                <f:selectItems value="#{QuestionTemplateDetailView.fields}"
+                                               var="field"
+                                               itemValue="#{field.id}"
+                                               itemLabel="#{field.name}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="category" value="Loại"/>
+                            <p:selectOneMenu id="category">
+                                <f:selectItem itemLabel="Logic" itemValue="1"/>
+                                <f:selectItem itemLabel="Ngữ Âm" itemValue="2"/>
+                                <f:selectItem itemLabel="Khó" itemValue="3"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="selectOne" value="Độ khó"/>
+                            <p:selectOneMenu id="selectOne"
+                                             value="#{QuestionTemplateDetailView.questionTemplate.level}">
+                                <f:selectItem itemLabel="Dễ" itemValue="#{1}"/>
+                                <f:selectItem itemLabel="Trung bình" itemValue="#{2}"/>
+                                <f:selectItem itemLabel="Khó" itemValue="#{3}"/>
+                                <p:ajax async="true" update="@form"/>
+                                <p:ajax update="@form" listener="#{QuestionTemplateDetailView.updateQuestionLevel()}"
+                                        event="change"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+
+    </ui:define>
+</ui:composition>

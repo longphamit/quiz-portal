@@ -1,0 +1,26 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+
+    </f:metadata>
+    <h:form id="layoutTopbarForm">
+        <div class="layout-topbar shadow-4 clearfix">
+            <div class="layout-topbar-left">
+                <a href="/index.xhtml" class="layout-topbar-logo">
+
+                </a>
+                <a class="layout-menu-button shadow-6" data-p-ripple="true">
+                    <i class="pi pi-chevron-right"/>
+                </a>
+                <a class="layout-topbar-mobile-button" onclick="$('.layout-wrapper').toggleClass('layout-topbar-mobile-active')" data-p-ripple="true"
+                   data-p-styleclass="{ selector: '.layout-topbar-right', enterActiveClass: 'overlay-enter layout-topbar-mobile-active', enterToClass: 'layout-topbar-mobile-active', leaveActiveClass: 'overlay-leave layout-topbar-mobile-active' }">
+                    <i class="pi pi-ellipsis-v fs-large"/>
+                </a>
+            </div>
+        </div>
+    </h:form>
+</ui:composition>

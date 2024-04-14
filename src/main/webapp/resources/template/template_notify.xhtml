@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <f:facet name="first">
+        <link rel="shortcut icon" href="https://s3-hcm-r1.longvan.net/lvs-gallery/favicon.ico"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+    </f:facet>
+    <title><ui:insert name="title"/> | Portal</title>
+    <h:outputScript name="ripple/ripple.js" library="layout"/>
+</h:head>
+
+<h:body styleClass="pages-body flex flex-column" style="background: gray">
+
+    <div class="align-self-center mt-auto mb-auto">
+        <div class="pages-panel card flex flex-column">
+            <div class="pages-header px-3 py-1" style="background: red">
+                <h2><ui:insert name="title"/></h2>
+            </div>
+            <div class="card mt-3 px-6">
+                <ui:insert name="image"/>
+            </div>
+            <div class="pages-detail pb-6">Requested resource is not available.</div>
+            <a href="../index.xhtml">
+                TRỞ VỀ TRANG CHỦ SAU <span id="countdown">10</span>s
+            </a>
+        </div>
+
+        <script type="text/javascript">
+            // Total seconds to wait
+            var seconds = 10;
+            function countdown() {
+                seconds = seconds - 1;
+                if (seconds &lt;= 0) {
+                    // Chnage your redirection link here
+                    window.location = "/index.xhtml";
+                } else {
+                    // Update remaining seconds
+                    document.getElementById("countdown").innerHTML = seconds;
+                    // Count down using javascript
+                    window.setTimeout("countdown()", 1000);
+                }
+            }
+            countdown();
+        </script>
+
+    </div>
+
+    <h:outputStylesheet name="styles/layout-light.css" library="layout"/>
+    <h:outputStylesheet name="styles/customize.css" library="layout"/>
+    <h:outputStylesheet name="primeflex/primeflex.min.css" library="layout"/>
+    <h:outputStylesheet name="ripple/ripple.css" library="layout"/>
+    <h:outputStylesheet name="styles/notify.css" library="notify"/>
+</h:body>
+
+</html>

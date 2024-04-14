@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="../../resources/template/template.xhtml ">
+    <ui:define name="title">Kho câu hỏi</ui:define>
+    <ui:define name="body">
+        <div>
+            <f:metadata>
+                <f:event type="preRenderView" listener="#{QuestionTemplateView.onLoad()}"/>
+            </f:metadata>
+        </div>
+        <div>
+
+            <p:toolbar>
+
+                <p:toolbarGroup align="right">
+                    <h:form>
+                        <p:commandButton value="Tạo mới"
+                                         action="#{QuestionTemplateView.addQuestion()}" icon="pi pi-plus"
+                                         styleClass="mr-2 ui-button-success"/>
+                    </h:form>
+
+                </p:toolbarGroup>
+            </p:toolbar>
+
+            <h:form id="frmQuestionTemplateTable">
+                <p:dataTable id="dt-questionTemplate" widgetVar="dtQuestionTemplate" var="questionTemplate"
+                             value="#{QuestionTemplateView.questionTemplateLazyViewModel}" lazy="true"
+                             reflow="true"
+                             style="font-size: 13px"
+                             rowsPerPageTemplate="10,20,30"
+                             paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom"
+                             currentPageReportTemplate="Hiển thị {startRecord}-{endRecord} trên tổng {totalRecords}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                    <p:column headerText="Nội dung" style="width:60%">
+                        <h:outputText escape="false" value="#{questionTemplate.content}"/>
+                    </p:column>
+                    <p:column headerText="Mức độ">
+                        <h:outputText escape="false" rendered="#{questionTemplate.level == 2}" value="TRUNG BÌNH"/>
+                        <h:outputText escape="false" rendered="#{questionTemplate.level ==1}" value="DỄ"/>
+                        <h:outputText escape="false" rendered="#{questionTemplate.level ==3}" value="KHÓ"/>
+                    </p:column>
+                    <p:column headerText="Ngày tạo">
+                        <h:outputText value="#{questionTemplate.createdTime}">
+                            <f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="GMT+7"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column style="text-align: right">
+                        <p:commandButton title="Xem" icon="pi pi-pencil" styleClass="ui-button-info ui-button-flat"
+                                         action="#{QuestionTemplateView.viewDetail(questionTemplate.id)}"/>
+                        <p:commandButton icon="pi pi-trash"
+                                         update="@form mgsForm:mgs"
+                                         action="#{QuestionTemplateView.remove(questionTemplate.id)}"
+                                         styleClass="ui-button-danger ui-button-flat">
+                            <p:confirm type="popup" header="Xác nhận" message="Bạn có muốn xóa câu hỏi này"
+                                       icon="pi pi-exclamation-triangle"/>
+
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </div>
+
+
+    </ui:define>
+</ui:composition>

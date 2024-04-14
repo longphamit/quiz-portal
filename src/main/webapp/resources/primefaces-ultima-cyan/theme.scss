@@ -1,0 +1,11 @@
+$primaryColor:#00BCD4;
+$primaryLightestColor: #E0F7FA;
+$primaryDarkColor: #00838F;
+$primaryTextColor:#212121;
+$accentColor:#d41900;
+$accentTextColor:#ffffff;
+
+$highlightBg: rgba($primaryColor, .12);
+$highlightTextColor: $primaryDarkColor;
+
+@import '../layout/styles/theme/theme-light/theme';

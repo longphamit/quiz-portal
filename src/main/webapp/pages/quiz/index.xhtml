@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="../../resources/template/template.xhtml ">
+    <ui:define name="title">Quiz</ui:define>
+    <ui:define name="body">
+        <div>
+            <f:metadata>
+                <f:event type="preRenderView" listener="#{QuizView.onLoad()}"/>
+            </f:metadata>
+        </div>
+        <div>
+            <h:form id="frmQuizSearch">
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:inputText placeholder="mã/tên"/>
+                        <p:commandButton value="Tìm kiếm" icon="pi pi-search" styleClass="mr-2" />
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <p:commandButton
+                                actionListener="#{QuizView.addQuiz()}"
+                                value="Tạo mới" icon="pi pi-plus" styleClass="mr-2 ui-button-success" />
+                    </p:toolbarGroup>
+                </p:toolbar>
+            </h:form>
+            <h:form id="frmQuizTable">
+                <p:dataTable id="dt-quiz" widgetVar="dtQuiz" var="quiz"
+                             value="#{QuizView.quizLazyViewModel}" lazy="true"
+                             reflow="true"
+                             style="font-size: 13px"
+                             stickyHeader="true"
+                             rowsPerPageTemplate="50,100,200"
+                             paginator="true" rows="50" rowSelectMode="add" paginatorPosition="bottom"
+                             currentPageReportTemplate="Hiển thị {startRecord}-{endRecord} trên tổng {totalRecords}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                    <p:column headerText="Mã" style="width:5%">
+                        <h:outputText value="#{quiz.id}"/>
+                    </p:column>
+                    <p:column headerText="Tên">
+                        <h:outputText value="#{quiz.name}"/>
+                    </p:column>
+                    <p:column headerText="Triển khai">
+                        <h:outputText rendered="#{quiz.processType eq 'PAIR'}" value="Ưu tiên cặp đôi"/>
+                        <h:outputText rendered="#{quiz.processType eq 'TRIANGLE'}" value="Tam giác"/>
+                    </p:column>
+                    <p:column headerText="Ngày tạo">
+                        <h:outputText
+                                style="font-size: 13px"
+                                rendered="#{quiz.createdTime ne null}"
+                                value="#{quiz.createdTime}">
+                            <f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="GMT+7"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column style="text-align: right">
+                        <p:commandButton title="Xem" icon="pi pi-pencil" styleClass="ui-button-info ui-button-flat"
+                                         action="#{QuizView.viewDetail(quiz.id)}"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </div>
+
+
+    </ui:define>
+</ui:composition>

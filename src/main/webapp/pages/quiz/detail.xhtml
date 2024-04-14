@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="../../resources/template/template.xhtml ">
+    <ui:define name="title">Chi tiết Quiz</ui:define>
+    <ui:define name="body">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{QuizDetailView.onLoad()}"/>
+        </f:metadata>
+        <h:form id="frmData">
+            <div class="ui-g card ui-g-12" style="margin-bottom: 10px !important;">
+                <div class="ui-g-12">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div style="display: flex; justify-content: flex-start">
+                            <p:inplace styleClass="detail-line" style="text-transform: uppercase ; font-size:18px"
+                                       editor="true">
+                                <f:facet name="input">
+                                    <p:inputText style="width:400px" value="#{QuizDetailView.quiz.name}"/>
+                                </f:facet>
+                                <f:facet name="output">
+                                    <h:outputText
+                                            style="font-weight: bold"
+                                            rendered="#{QuizDetailView.quiz.name ne null and QuizDetailView.quiz.name ne ''}"
+                                            value="#{QuizDetailView.quiz.name}"/>
+                                    <h:outputText
+                                            rendered="#{QuizDetailView.quiz.name eq null or QuizDetailView.quiz.name eq ''}"
+                                            style="text-decoration: underline;font-weight: bold"
+                                            value="Chưa có tên"/>
+                                </f:facet>
+                                <p:ajax event="save" listener="#{QuizDetailView.updateName()}"/>
+                            </p:inplace>
+                        </div>
+                        <div style="display: flex; justify-content: flex-end">
+                            <p:linkButton styleClass="edit-button"
+                                          outcome="survey_result"
+                                          icon="pi pi-desktop"
+                                          style="margin-right:20px;"
+                                          target="_blank"
+                                          value="Xem kết quả"
+                            >
+                                <f:param name="id" value="#{QuizDetailView.quizId}"/>
+                            </p:linkButton>
+                            <p:commandButton title="Xóa" icon="pi pi-trash"
+                                             actionListener="#{QuizDetailView.removeQuiz()}"
+                                             styleClass="ui-button-danger">
+                                <p:confirm type="popup" header="Confirmation"
+                                           message="Bạn có muốn xóa bài kiểm tra hỏi này?" icon="pi pi-info-circle"/>
+                            </p:commandButton>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <p:panelGrid columns="4" layout="flex"
+                                 columnClasses="col-12 md:col-6 lg:col-2, col-12 md:col-6 lg:col-4, col-12 md:col-6 lg:col-2, col-12 md:col-6 lg:col-4"
+                                 contentStyleClass="align-items-baseline ui-fluid">
+                        <p:outputLabel
+                                style="font-weight: bold"
+                                value="Loại"/>
+                        <p:selectOneMenu value="#{QuizDetailView.quiz.type}">
+                            <f:selectItem itemValue="TEST" itemLabel="Bài kiểm tra"/>
+                            <f:selectItem itemValue="SURVEY" itemLabel="Khảo sát"/>
+                            <p:ajax async="true"/>
+                            <p:ajax event="change" update="@form frmQuizQuestionSetting frmQuizSubmit"
+                                    listener="#{QuizDetailView.updateType()}"/>
+
+                        </p:selectOneMenu>
+
+                        <p:outputLabel
+                                style="font-weight: bold"
+                                value="Lĩnh vực"/>
+                        <p:selectOneMenu value="#{QuizDetailView.quiz.fieldId}">
+                            <f:selectItem itemValue="" itemLabel="Chưa có thông tin"/>
+                            <f:selectItems value="#{QuizDetailView.fields}"
+                                           var="field"
+                                           itemValue="#{field.id}"
+                                           itemLabel="#{field.name}"/>
+                            <p:ajax event="change" listener="#{QuizDetailView.updateFieldId()}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel
+                                style="font-weight: bold"
+                                rendered="#{QuizDetailView.quiz.type ne 'TEST'}"
+                                value="Số người tham gia khảo sát"/>
+
+                        <p:inplace editor="true" rendered="#{QuizDetailView.quiz.type ne 'TEST'}">
+                            <f:facet name="output">
+                                <h:outputText
+                                        style="text-decoration: underline"
+
+                                        value="#{QuizDetailView.quiz.participantsLimit}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputNumber value="#{QuizDetailView.quiz.participantsLimit}" emptyValue="0"
+                                               minValue="0"
+                                               decimalPlaces="0"/>
+                            </f:facet>
+                            <p:ajax event="save" update="@form mgsForm:mgs"
+                                    listener="#{QuizDetailView.updateParticipants()}"/>
+                        </p:inplace>
+
+                        <p:outputLabel
+                                style="font-weight: bold"
+                                value="Triển khai"/>
+                        <p:selectOneMenu value="#{QuizDetailView.quiz.processType}">
+                            <f:selectItem itemValue="" itemLabel="Chưa có thông tin"/>
+                            <f:selectItem itemValue="PAIR" itemLabel="Ưu tiên cặp đôi"/>
+                            <f:selectItem itemValue="TRIANGLE" itemLabel="Tam giác"/>
+
+                            <p:ajax event="change" listener="#{QuizDetailView.updateProcessType()}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel
+                                style="font-weight: bold"
+                                rendered="#{QuizDetailView.quiz.type eq 'TEST'}"
+                                value="Thời gian làm bài (phút)"/>
+                        <p:inputNumber
+                                rendered="#{QuizDetailView.quiz.type eq 'TEST'}"
+                                emptyValue="0" minValue="0" decimalPlaces="0"/>
+
+
+                        <p:outputLabel
+                                style="font-weight: bold"
+                                rendered="#{QuizDetailView.quiz.type eq 'TEST'}"
+                                value="Số lượng câu hỏi"/>
+                        <h:outputText
+                                rendered="#{QuizDetailView.quiz.type eq 'TEST'}"
+                                value="#{QuizDetailView.quiz.questionTemplates.size()}"/>
+                    </p:panelGrid>
+                </div>
+                <div class="ui-g-12">
+                    <div style="margin-left: 5px;margin-bottom:10px;font-weight: bold">
+                        <p:outputLabel
+                                value="Hướng dẫn làm bài"/>
+                    </div>
+                    <pe:sunEditor height="150"
+                                  toolbar="[['save','fontSize','formatBlock','blockquote', 'bold', 'underline', 'italic','fontColor', 'hiliteColor', 'outdent', 'indent', 'align', 'horizontalRule', 'list', 'table']]"
+                                  value="#{QuizDetailView.quiz.guide}">
+                        <p:ajax async="true"/>
+                        <p:ajax event="save"
+                                update="mgsForm:mgs"
+                                listener="#{QuizDetailView.updateGuide()}"/>
+                    </pe:sunEditor>
+                </div>
+            </div>
+        </h:form>
+        <h:form id="frmQuizQuestionSetting">
+            <h:panelGroup id="pngSurvey" rendered="#{QuizDetailView.quiz.type eq 'SURVEY'}">
+                <div class="ui-g ui-g-12 card" style="margin-bottom: 10px !important;">
+                    <div class="ui-g-12">
+                        <div>
+                            <div>
+                                <div style="justify-content: space-between;display: flex">
+                                    <div style="justify-content: flex-start;display: flex">
+                                        <h5>Mẫu vật</h5>
+                                    </div>
+
+                                    <div style="justify-content: flex-end;display: flex">
+                                        <p:commandButton value="Tạo mẫu vật"
+                                                         rendered="#{QuizDetailView.quiz.type eq 'PAIR' and QuizDetailView.quizSubjects.size() eq null or QuizDetailView.quizSubjects.size() lt 2}"
+                                                         onclick="PF('dlgCreateQuizSubject').show()"/>
+                                    </div>
+                                </div>
+                                <p:dataTable var="quizSubject"
+                                             rowIndexVar="rowIndexVar"
+                                             value="#{QuizDetailView.quizSubjects}">
+                                    <p:column headerText="Ký Hiệu" style="width:10%">
+                                        <h:outputText value="#{quizSubject.key}"/>
+                                    </p:column>
+                                    <p:column headerText="Tên" style="width: 20%">
+                                        <h:outputText value="#{quizSubject.name}"/>
+                                    </p:column>
+                                    <p:column headerText="Số lượng mã hóa" style="width:15%">
+                                        <h:outputText value="#{quizSubject.codes.size()}"/>
+                                    </p:column>
+                                    <p:column headerText="Mã hóa">
+                                        <h:outputText value="#{quizSubject.codes}"/>
+                                    </p:column>
+                                    <p:column style="text-align:right;width: 20%" >
+                                        <p:commandButton styleClass="ui-button-flat"
+                                                         update="@form mgsForm:mgs"
+                                                         action="#{QuizDetailView.generateQuizSubjectCodes(quizSubject.id)}"
+                                                         value="Tạo mã hóa"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:panelGroup>
+
+            <h:panelGroup id="pngTest" rendered="#{QuizDetailView.quiz.type eq 'TEST'}">
+                <div class="ui-g ui-g-12 card">
+                    <div class="ui-g-12">
+                        <div>
+                            <div>
+                                <h5>Câu hỏi</h5>
+                            </div>
+                            <div class="ui-fluid formgrid grid">
+                                <div class="field col-12 md:col-3">
+                                    <p:outputLabel for="numEasy" value="Số câu hỏi dễ"/>
+                                    <p:inputNumber id="numEasy" placeholder="Số câu hỏi DỄ" minValue="0"
+                                                   decimalPlaces="0"
+                                                   value="#{QuizDetailView.autoAddQuestionViewModel.numEasy}"
+                                                   style="margin-left:5px">
+                                        <p:ajax async="true"/>
+                                    </p:inputNumber>
+                                </div>
+                                <div class="field col-12 md:col-3">
+                                    <p:outputLabel for="numMedium" value="Số câu hỏi trung bình"/>
+                                    <p:inputNumber id="numMedium" placeholder="Số câu hỏi TRUNG BÌNH" minValue="0"
+                                                   decimalPlaces="0"
+                                                   value="#{QuizDetailView.autoAddQuestionViewModel.numMedium}"
+                                                   label="Số câu hỏi trung bình"
+                                                   style="margin-left:5px;">
+                                        <p:ajax async="true"/>
+                                    </p:inputNumber>
+                                </div>
+                                <div class="field col-12 md:col-3">
+                                    <p:outputLabel for="numHard" value="Số câu hỏi khó"/>
+                                    <p:inputNumber id="numHard" placeholder="Số câu hỏi KHÓ" minValue="0"
+                                                   decimalPlaces="0"
+                                                   style="margin-left:5px"
+                                                   value="#{QuizDetailView.autoAddQuestionViewModel.numHard}"
+                                    >
+                                        <p:ajax async="true"/>
+                                    </p:inputNumber>
+
+                                </div>
+                                <div class="col-12 md:col-3">
+                                    <p:commandButton value="Thêm câu hỏi tự động"
+                                                     icon="pi pi-plus"
+                                                     id="btnGenerateQuestion"
+                                                     style="margin-top:30px"
+                                                     update="@form  mgsForm:mgs"
+                                                     action="#{QuizDetailView.randomAddQuestion()}"
+                                                     styleClass="ui-button-success">
+
+                                    </p:commandButton>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:panelGroup>
+            <h:panelGroup>
+                <div class="ui-g ui-g-12 card">
+                    <div class="ui-g-12">
+                        <div>
+                            <div>
+                                <div style="justify-content: space-between;display: flex">
+                                    <div style="justify-content: flex-start;display: flex">
+                                        <h5>Câu hỏi</h5>
+                                    </div>
+                                    <div style="justify-content: flex-end;display: flex">
+                                        <p:commandButton style="margin-right:5px" value="Tạo câu hỏi so sánh mẫu vật"
+                                                         update="@form mgsForm:mgs frmQuizSubmit"
+                                                         action="#{QuizDetailView.addQuestionCompareQuizSubject()}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-g-12">
+                        <p:dataTable var="question"
+                                     rowIndexVar="rowIndexVar"
+                                     value="#{QuizDetailView.quiz.questionTemplates}" draggableRows="true">
+                            <p:ajax event="rowReorder"/>
+                            <p:column headerText="">
+                                <h:outputText escape="false" value="#{rowIndexVar+1}"/>
+                            </p:column>
+
+                            <p:column headerText="Nội dung">
+                                <h:outputText escape="false" value="#{question.content}"/>
+                            </p:column>
+
+                            <p:column headerText="Mức độ" rendered="#{QuizDetailView.quiz.type ne 'SURVEY'}">
+                                <h:outputText rendered="#{question.level eq '2'}" value="TRUNG BÌNH"/>
+                                <h:outputText rendered="#{question.level eq '1'}" value="DỄ"/>
+                                <h:outputText rendered="#{question.level eq '3'}" value="KHÓ"/>
+                            </p:column>
+
+                            <p:column headerText="Cặp mã" rendered="#{QuizDetailView.quiz.type eq 'SURVEY'}">
+                                <ui:repeat value="#{question.questionAnswerTemplates}" var="answer">
+                                    <h:outputText value=" [#{answer.key}] "/>
+                                </ui:repeat>
+                            </p:column>
+                            <p:column style="text-align: right">
+                                <p:commandLink
+                                        styleClass="ui-button-flat"
+                                        icon="pi pi-angle-right"
+                                />
+                            </p:column>
+                            <p:column style="text-align: right">
+                                <p:commandButton title="Xem" icon="pi pi-pencil"
+                                                 styleClass="ui-button-info ui-button-flat"
+                                                 action="#{QuestionTemplateView.viewDetail(question.id)}"/>
+                                <p:commandButton icon="pi pi-trash"
+                                                 update="@form mgsForm:mgs"
+                                                 action="#{QuizDetailView.removeQuestion(question.id)}"
+                                                 styleClass="ui-button-danger ui-button-flat">
+                                    <p:confirm type="popup" header="Xác nhận" message="Bạn có muốn xóa câu hỏi này"
+                                               icon="pi pi-exclamation-triangle"/>
+
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+
+                    </div>
+                </div>
+            </h:panelGroup>
+        </h:form>
+        <h:form id="frmQuizSubmit">
+            <h:panelGroup id="pngQuizSubmit" rendered="#{QuizDetailView.quiz.type eq 'SURVEY'}">
+                <div class="ui-g ui-g-12 card" style="margin-bottom: 10px !important;">
+                    <div class="ui-g-12">
+                        <div>
+                            <div>
+                                <div style="justify-content: space-between;display: flex">
+                                    <div style="justify-content: flex-start;display: flex">
+                                        <h5>Trang khảo sát</h5>
+                                    </div>
+                                    <div style="justify-content: flex-end;display: flex">
+                                        <p:commandButton value="Tạo trang làm khảo sát"
+                                                         actionListener="#{QuizDetailView.addQuizSubmit()}"
+                                                         update="frmQuizSubmit"
+                                                         style="margin-right: 5px"
+                                                         styleClass="ui-button-info">
+                                        </p:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-g-12">
+                        <p:dataTable var="quizSubmit"
+                                     rowIndexVar="rowIndexVar"
+                                     value="#{QuizDetailView.quizSubmits}">
+                            <p:column style="width:10%" headerText="STT">
+                                <h:outputText value="#{rowIndexVar+1}"/>
+                            </p:column>
+                            <p:column style="width:10%" headerText="Mã">
+                                <h:outputText value="#{quizSubmit.id}"/>
+                            </p:column>
+                            <p:column style="width:10%" headerText="Trạng thái">
+                                <p:tag style="background-color: #2196F3"
+                                       rendered="#{quizSubmit.status ==1}"
+                                       value="NEW"/>
+                                <p:tag style="background-color: #f5c518"
+                                       rendered="#{quizSubmit.status ==2}"
+                                       value="DOING"/>
+                                <p:tag style="background-color: #0acb0a"
+                                       rendered="#{quizSubmit.status ==3}"
+                                       value="DONE"/>
+
+                            </p:column>
+                            <p:column headerText="URL">
+                                <h:outputText value="#{quizSubmit.qr.url}"/>
+                            </p:column>
+                            <p:column headerText="QR" style="text-align:right">
+                                <img src="data:image/png;base64,#{quizSubmit.qr.image}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </h:panelGroup>
+        </h:form>
+        <p:dialog header="Tạo mẫu vật" modal="true" width="500" widgetVar="dlgCreateQuizSubject">
+            <h:form id="frmCreateQuizSubject">
+                <div class="ui-g-12 ui-fluid">
+                    <p:inputText placeholder="Nhập tên" value="#{QuizDetailView.quizSubjectAddObject.name}">
+                        <p:ajax async="true"/>
+                    </p:inputText>
+                    <p:inputText placeholder="Nhập ký hiệu" value="#{QuizDetailView.quizSubjectAddObject.key}">
+                        <p:ajax async="true"/>
+                    </p:inputText>
+                </div>
+            </h:form>
+            <f:facet name="footer">
+                <p:commandButton value="Hủy"/>
+                <p:commandButton value="Tạo" update="frmCreateQuizSubject frmQuizQuestionSetting"
+                                 action="#{QuizDetailView.addQuizSubject()}"/>
+            </f:facet>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
