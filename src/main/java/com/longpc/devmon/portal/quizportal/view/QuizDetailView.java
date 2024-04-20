@@ -130,62 +130,7 @@ public class QuizDetailView extends BaseView {
     }
 
     public void generateQuizSubjectCodes(String quizSubjectId) {
-        int countCodes = 0;
-        if (quiz.getParticipantsLimit() % 2 != 0) {
-            addError("Số lượng người tham gia phải là số chẵn");
-            return;
-        }
-        if (quiz.getProcessType().equals(TypeEnum.QuizProcessType.PAIR.name())) {
-            countCodes = quiz.getParticipantsLimit();
-        } else if (quiz.getProcessType().equals(TypeEnum.QuizProcessType.TRIANGLE.name())) {
-            countCodes = quiz.getParticipantsLimit() + quiz.getParticipantsLimit() / 2;
-        }
-        List<String> existCode = new ArrayList<>();
-        for (QuizSubject quizSubject : quizSubjects) {
-            if (!ObjectUtils.isEmpty(quizSubject.getCodes()) && !quizSubject.getId().equals(quizSubjectId)) {
-                existCode.addAll(quizSubject.getCodes());
-            }
-        }
-        List<String> codes = new ArrayList<>();
-        for (int i = 0; i < countCodes; i++) {
-            List<Integer> digits = new ArrayList<>();
-            for (int j = 0; j <= 9; j++) {
-                digits.add(j);
-            }
-
-            boolean checkFails = false;
-            String code = new String();
-            do {
-                Collections.shuffle(digits);
-                List<Integer> uniqueDigits = digits.subList(0, 3);
-                StringBuilder rs = new StringBuilder();
-                for (Integer integer : uniqueDigits) {
-                    rs.append(integer);
-                }
-                code = rs.toString();
-
-
-                if (code.startsWith("0")) {
-                    checkFails = true;
-                    System.out.println(" ==== CHECK CODE START 0 ==== " + code);
-                } else if (existCode.contains(code) || codes.contains(code)) {
-                    System.out.println(" ==== CHECK CODE EXIST ==== " + code);
-                    checkFails = true;
-                } else if ((uniqueDigits.get(1) == uniqueDigits.get(0) + 1) && (uniqueDigits.get(2) == uniqueDigits.get(1) + 1)) {
-                    System.out.println(" ==== CHECK CODE 123 ==== " + code);
-                    checkFails = true;
-                } else if ((uniqueDigits.get(0) + uniqueDigits.get(1) + uniqueDigits.get(2)) % 3 != 0) {
-                    checkFails = true;
-                    System.out.println(" ==== CHECK % 3 != 0 ==== " + code);
-                } else {
-                    checkFails = false;
-                }
-            } while (checkFails);
-            if (!ObjectUtils.isEmpty(code)) {
-                codes.add(code);
-            }
-        }
-        quizSubjectService.updateCodes(quizSubjectId, codes, SessionUtil.getLoginId());
+        quizSubjectService.generateCode(quizSubjectId, quizId, SessionUtil.getLoginId());
         quizSubjects = quizSubjectService.getByIds(quiz.getQuizSubjectIds());
     }
 

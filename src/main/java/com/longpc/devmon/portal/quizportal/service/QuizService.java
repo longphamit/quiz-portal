@@ -21,6 +21,8 @@ public interface QuizService {
 
     Quiz generateById(String id, String performerId);
 
+    Quiz generateSurveyById(String id, String processType, String performerId);
+
     List<Quiz> getAll();
 
     void updateName(String id, String name, String performerId);
@@ -52,4 +54,8 @@ public interface QuizService {
     void updateParticipantsLimit(String quizId, int participantsLimit, String performerId);
 
     void removeAllQuestionTemplate(String quizId);
+
+    void generateQuestionForPairSurvey(String quizId, String performerId);
+
+    List<Quiz> getByCreatedPartyId(String performerId);
 }

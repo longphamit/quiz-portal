@@ -88,4 +88,8 @@ public class QuizManager extends BaseManager<Quiz> {
         }
         return null;
     }
+
+    public List<Quiz> getByCreatedPartyId(String partyId){
+        return mongoTemplate.find(Query.query(Criteria.where("createdBy").is(partyId)), Quiz.class);
+    }
 }

@@ -63,8 +63,7 @@ public abstract class BaseManager<T> {
     public void updateAttribute(String id, String name, Object value, String performerId) {
         Update update = new Update();
         update.set(name, value);
-        UpdateResult updateResult = this.mongoTemplate.updateFirst(Query.query(Criteria.where("_id").is(id)), update, this.collectionName);
-        Assert.isTrue(updateResult.getModifiedCount() != 0L, "Update record id " + id + " for collection + " + this.collectionName + " is not success!");
+        this.mongoTemplate.updateFirst(Query.query(Criteria.where("_id").is(id)), update, this.collectionName);
     }
 
     public void remove(String id, String performerId) {

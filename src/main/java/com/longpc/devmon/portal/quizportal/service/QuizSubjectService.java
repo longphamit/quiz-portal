@@ -14,4 +14,6 @@ public interface QuizSubjectService {
     QuizSubject create(String name, String key, String performerId);
 
     void updateCodes(String id, List<String> codes, String performerId);
+
+    void generateCode(String quizSubjectId, String quizId, String performerId);
 }
