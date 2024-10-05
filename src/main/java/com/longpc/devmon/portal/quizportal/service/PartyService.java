@@ -14,4 +14,6 @@ public interface PartyService {
     Party getById(String id);
 
     List<Party> getByIds(List<String> ids);
+
+    List<Party> getAll();
 }

@@ -49,11 +49,13 @@ public class QuizManager extends BaseManager<Quiz> {
 
     public void addQuestionTemplate(String id, List<QuestionTemplate> questionTemplates, String performerId) {
         Query query = Query.query(Criteria.where("_id").is(id));
-        Update update = new Update();
+
         for (QuestionTemplate questionTemplate : questionTemplates) {
+            Update update = new Update();
             update.push("questionTemplates", questionTemplate);
+            mongoTemplate.updateFirst(query, update, this.collectionName);
         }
-        mongoTemplate.updateFirst(query, update, this.collectionName);
+
     }
 
     public boolean checkExistQuestionTemplate(String quizId, QuestionTemplate questionTemplate) {

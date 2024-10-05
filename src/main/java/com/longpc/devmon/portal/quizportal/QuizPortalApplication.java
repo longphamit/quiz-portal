@@ -25,7 +25,7 @@ public class QuizPortalApplication implements ServletContextAware {
     @Bean
     public ServletRegistrationBean<FacesServlet> servletRegistrationBean() {
         ServletRegistrationBean<FacesServlet> servletRegistrationBean = new ServletRegistrationBean<>(
-                new FacesServlet(), "*.xhtml");
+                new FacesServlet(), "*.xhtml" );
         servletRegistrationBean.setLoadOnStartup(1);
         return servletRegistrationBean;
     }

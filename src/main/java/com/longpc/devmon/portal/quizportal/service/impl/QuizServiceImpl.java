@@ -151,13 +151,16 @@ public class QuizServiceImpl implements QuizService {
         quizManager.removeAllQuestionTemplate(quizId);
     }
 
+    // Tao cau hoi cho cap doi
     @Override
     public void generateQuestionForPairSurvey(String quizId, String performerId) {
         removeAllQuestionTemplate(quizId);
         Map<String, String> codes = new HashMap();
         Map<String, String> names = new HashMap();
+        System.out.println("======= START GENERATE QUESTION ======");
         generateQuestionCompareQuizSubject(quizId, false, codes, names);
         generateQuestionCompareQuizSubject(quizId, true, codes, names);
+        System.out.println("======= END GENERATE QUESTION ======");
     }
 
     @Override
@@ -165,6 +168,7 @@ public class QuizServiceImpl implements QuizService {
         return quizManager.getByCreatedPartyId(performerId);
     }
 
+    // Tao cau hoi cho cap doi
     private void generateQuestionCompareQuizSubject(String quizId, boolean isReverse, Map<String, String> codes, Map<String, String> names) {
         Quiz quiz = quizManager.getById(quizId);
         List<QuizSubject> quizSubjects = quizSubjectManager.getByIds(quiz.getQuizSubjectIds());
@@ -172,7 +176,6 @@ public class QuizServiceImpl implements QuizService {
             List<QuestionTemplate> questionTemplates = null;
             boolean checkExist;
             do {
-                checkExist = false;
                 questionTemplates = questionTemplateService.generateById(
                         DataUtil.generateId(),
                         isReverse,
@@ -181,12 +184,11 @@ public class QuizServiceImpl implements QuizService {
                         codes,
                         names,
                         quizSubjects, SessionUtil.getLoginId());
-
                 checkExist = checkExistQuestionTemplate(quizId, questionTemplates);
-
             } while (checkExist);
             if (!ObjectUtils.isEmpty(questionTemplates)) {
-                System.out.println("======= ADD QUESTION TEMPLATE " + i + " ======");
+
+                System.out.println("ADD QUESTION TEMPLATE " + i);
                 addQuestionTemplates(quizId, questionTemplates, SessionUtil.getLoginId());
                 for (QuestionTemplate questionTemplate : questionTemplates) {
                     for (QuestionAnswerTemplate key : questionTemplate.getQuestionAnswerTemplates()) {

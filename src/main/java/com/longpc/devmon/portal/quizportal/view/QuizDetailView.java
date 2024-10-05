@@ -143,8 +143,7 @@ public class QuizDetailView extends BaseView {
         quizService.removeAllQuestionTemplate(quizId);
         Map<String, String> codes = new HashMap();
         Map<String, String> names = new HashMap();
-        generateQuestionCompareQuizSubject(false, codes, names);
-        generateQuestionCompareQuizSubject(true, codes, names);
+        quizService.generateQuestionForPairSurvey(quizId, "");
         quiz = quizService.getById(quizId);
         if (!ObjectUtils.isEmpty(quizSubmits)) {
             quizSubmitService.remove(quizSubmits.stream().map(QuizSubmit::getId).collect(Collectors.toList()));
@@ -152,35 +151,6 @@ public class QuizDetailView extends BaseView {
         }
     }
 
-    private void generateQuestionCompareQuizSubject(boolean isReverse, Map<String, String> codes, Map<String, String> names) {
-        for (int i = 0; i < quiz.getParticipantsLimit() / 2; i++) {
-            List<QuestionTemplate> questionTemplates = null;
-            boolean checkExist;
-            do {
-                checkExist = false;
-                questionTemplates = questionTemplateService.generateById(
-                        DataUtil.generateId(),
-                        isReverse,
-                        TypeEnum.Question.RADIO,
-                        TypeEnum.QuizProcessType.valueOf(quiz.getProcessType()),
-                        codes,
-                        names,
-                        quizSubjects, SessionUtil.getLoginId());
-
-                checkExist = quizService.checkExistQuestionTemplate(quizId, questionTemplates);
-
-            } while (checkExist);
-            if (!ObjectUtils.isEmpty(questionTemplates)) {
-                System.out.println("======= ADD QUESTION TEMPLATE " + i + " ======");
-                quizService.addQuestionTemplates(quizId, questionTemplates, SessionUtil.getLoginId());
-                for (QuestionTemplate questionTemplate : questionTemplates) {
-                    for (QuestionAnswerTemplate key : questionTemplate.getQuestionAnswerTemplates()) {
-                        codes.put(key.getKey(), key.getKey());
-                    }
-                }
-            }
-        }
-    }
 
     public void addQuizSubmit() {
         quizSubmits = quizSubmitService.generateSurveyTypePair(quizId, quiz.getQuestionTemplates(), surveyHost + "/survey/submit");

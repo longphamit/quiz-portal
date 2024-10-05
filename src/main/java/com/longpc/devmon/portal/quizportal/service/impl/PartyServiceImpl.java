@@ -6,7 +6,9 @@ import com.longpc.devmon.portal.quizportal.service.PartyService;
 import com.longpc.devmon.portal.quizportal.util.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,7 +25,7 @@ public class PartyServiceImpl implements PartyService {
         Party party = new Party();
         party.setId(DataUtil.generateId());
         party.setName(name);
-       return (Party) partyManager.save(party, performerId);
+        return (Party) partyManager.save(party, performerId);
     }
 
     public Party getById(String id) {
@@ -32,5 +34,14 @@ public class PartyServiceImpl implements PartyService {
 
     public List<Party> getByIds(List<String> ids) {
         return partyManager.getByIds(ids);
+    }
+
+    @Override
+    public List<Party> getAll() {
+        List<Party> parties = partyManager.getAll();
+        if (!ObjectUtils.isEmpty(parties)) {
+            Collections.reverse(parties);
+        }
+        return parties;
     }
 }

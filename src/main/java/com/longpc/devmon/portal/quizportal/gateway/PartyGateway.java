@@ -5,6 +5,8 @@ import com.longpc.devmon.portal.quizportal.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Long PC
  * 11/4/24| 22:34 | 2024
@@ -19,5 +21,10 @@ public class PartyGateway {
     @GetMapping("{id}")
     public Party getById(@PathVariable("id") String id) {
         return partyService.getById(id);
+    }
+
+    @GetMapping
+    public List<Party> getAll() {
+        return partyService.getAll();
     }
 }
