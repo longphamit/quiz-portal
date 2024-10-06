@@ -70,6 +70,7 @@ public class TypeEnum {
 
     public enum QuizProcessType {
         PAIR,
-        TRIANGLE
+        TRIANGLE,
+        AFC_3
     }
 }

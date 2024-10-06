@@ -10,6 +10,7 @@ import java.util.List;
  **/
 public interface QuizSubjectService {
     List<QuizSubject> getByIds(List<String> ids);
+    QuizSubject getById(String id);
 
     QuizSubject create(String name, String key, String performerId);
 

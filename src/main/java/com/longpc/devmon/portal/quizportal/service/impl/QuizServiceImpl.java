@@ -1,27 +1,19 @@
 package com.longpc.devmon.portal.quizportal.service.impl;
 
 import com.longpc.devmon.portal.quizportal.constant.TypeEnum;
-import com.longpc.devmon.portal.quizportal.entity.quiz.QuestionAnswerTemplate;
 import com.longpc.devmon.portal.quizportal.entity.quiz.QuizSubject;
 import com.longpc.devmon.portal.quizportal.entity.quiz.submit.QuestionTemplate;
 import com.longpc.devmon.portal.quizportal.entity.quiz.Quiz;
-import com.longpc.devmon.portal.quizportal.entity.quiz.submit.QuizSubmit;
 import com.longpc.devmon.portal.quizportal.manager.QuizManager;
 import com.longpc.devmon.portal.quizportal.manager.QuizSubjectManager;
 import com.longpc.devmon.portal.quizportal.service.QuestionTemplateService;
 import com.longpc.devmon.portal.quizportal.service.QuizService;
-import com.longpc.devmon.portal.quizportal.util.DataUtil;
-import com.longpc.devmon.portal.quizportal.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 /**
@@ -153,13 +145,32 @@ public class QuizServiceImpl implements QuizService {
 
     // Tao cau hoi cho cap doi
     @Override
-    public void generateQuestionForPairSurvey(String quizId, String performerId) {
+    public void generateQuestionForSurvey(String quizId, TypeEnum.QuizProcessType quizProcessType, String performerId) {
         removeAllQuestionTemplate(quizId);
-        Map<String, String> codes = new HashMap();
-        Map<String, String> names = new HashMap();
+        Quiz quiz = this.getById(quizId);
+        List<QuizSubject> quizSubjects = quizSubjectManager.getByIds(quiz.getQuizSubjectIds());
         System.out.println("======= START GENERATE QUESTION ======");
-        generateQuestionCompareQuizSubject(quizId, false, codes, names);
-        generateQuestionCompareQuizSubject(quizId, true, codes, names);
+        List<QuestionTemplate> questionTemplates = new ArrayList<>();
+        this.removeAllQuestionTemplate(quizId);
+        switch (quizProcessType){
+            case PAIR:
+                questionTemplates= questionTemplateService.generatePairById(
+                        quizId,
+                        quizSubjects,
+                        quiz.getParticipantsLimit(),
+                        performerId);
+
+                break;
+            case AFC_3:
+            case TRIANGLE:
+                questionTemplates = questionTemplateService.generateTriangleById(
+                        quizId,
+                        quizSubjects,
+                        quiz.getParticipantsLimit(),
+                        performerId);
+                break;
+        }
+        this.addQuestionTemplates(quizId, questionTemplates, performerId);
         System.out.println("======= END GENERATE QUESTION ======");
     }
 
@@ -168,34 +179,5 @@ public class QuizServiceImpl implements QuizService {
         return quizManager.getByCreatedPartyId(performerId);
     }
 
-    // Tao cau hoi cho cap doi
-    private void generateQuestionCompareQuizSubject(String quizId, boolean isReverse, Map<String, String> codes, Map<String, String> names) {
-        Quiz quiz = quizManager.getById(quizId);
-        List<QuizSubject> quizSubjects = quizSubjectManager.getByIds(quiz.getQuizSubjectIds());
-        for (int i = 0; i < quiz.getParticipantsLimit() / 2; i++) {
-            List<QuestionTemplate> questionTemplates = null;
-            boolean checkExist;
-            do {
-                questionTemplates = questionTemplateService.generateById(
-                        DataUtil.generateId(),
-                        isReverse,
-                        TypeEnum.Question.RADIO,
-                        TypeEnum.QuizProcessType.valueOf(quiz.getProcessType()),
-                        codes,
-                        names,
-                        quizSubjects, SessionUtil.getLoginId());
-                checkExist = checkExistQuestionTemplate(quizId, questionTemplates);
-            } while (checkExist);
-            if (!ObjectUtils.isEmpty(questionTemplates)) {
 
-                System.out.println("ADD QUESTION TEMPLATE " + i);
-                addQuestionTemplates(quizId, questionTemplates, SessionUtil.getLoginId());
-                for (QuestionTemplate questionTemplate : questionTemplates) {
-                    for (QuestionAnswerTemplate key : questionTemplate.getQuestionAnswerTemplates()) {
-                        codes.put(key.getKey(), key.getKey());
-                    }
-                }
-            }
-        }
-    }
 }

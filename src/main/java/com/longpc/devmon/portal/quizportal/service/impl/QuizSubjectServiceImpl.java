@@ -35,6 +35,11 @@ public class QuizSubjectServiceImpl implements QuizSubjectService {
     }
 
     @Override
+    public QuizSubject getById(String id) {
+        return quizSubjectManager.getById(id);
+    }
+
+    @Override
     public QuizSubject create(String name, String key, String performerId) {
         QuizSubject quizSubject = new QuizSubject();
         quizSubject.setName(name);
@@ -47,15 +52,19 @@ public class QuizSubjectServiceImpl implements QuizSubjectService {
         quizSubjectManager.updateAttribute(id, "codes", codes, performerId);
     }
 
+    // tạo mã hoá
     @Override
     public void generateCode(String quizSubjectId, String quizId, String performerId) {
         int countCodes = 0;
         Quiz quiz = quizManager.getById(quizId);
         List<QuizSubject> quizSubjects = getByIds(quiz.getQuizSubjectIds());
+        // số lượng mã hoá = số người tham gia nếu là phép thử ưu tiên cặp đôi
         if (quiz.getProcessType().equals(TypeEnum.QuizProcessType.PAIR.name())) {
             countCodes = quiz.getParticipantsLimit();
-        } else if (quiz.getProcessType().equals(TypeEnum.QuizProcessType.TRIANGLE.name())) {
-            countCodes = quiz.getParticipantsLimit() + quiz.getParticipantsLimit() / 2;
+        } else if (quiz.getProcessType().equals(TypeEnum.QuizProcessType.TRIANGLE.name())
+                || quiz.getProcessType().equals(TypeEnum.QuizProcessType.AFC_3.name())) {
+            // số lượng mã hoá = số người tham gia * 9 / 6
+            countCodes = quiz.getParticipantsLimit() * 9 / 6;
         }
         List<String> existCode = new ArrayList<>();
         for (QuizSubject quizSubject : quizSubjects) {

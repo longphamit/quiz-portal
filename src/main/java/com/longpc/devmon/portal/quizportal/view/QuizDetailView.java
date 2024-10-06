@@ -3,16 +3,13 @@ package com.longpc.devmon.portal.quizportal.view;
 import com.longpc.devmon.portal.quizportal.config.scope.view.ViewScope;
 import com.longpc.devmon.portal.quizportal.constant.TypeEnum;
 import com.longpc.devmon.portal.quizportal.entity.Field;
-import com.longpc.devmon.portal.quizportal.entity.quiz.QuestionAnswerTemplate;
 import com.longpc.devmon.portal.quizportal.entity.quiz.submit.QuestionTemplate;
 import com.longpc.devmon.portal.quizportal.entity.quiz.Quiz;
 import com.longpc.devmon.portal.quizportal.entity.quiz.QuizSubject;
 import com.longpc.devmon.portal.quizportal.entity.quiz.submit.QuizSubmit;
 import com.longpc.devmon.portal.quizportal.service.*;
-import com.longpc.devmon.portal.quizportal.util.DataUtil;
 import com.longpc.devmon.portal.quizportal.util.SessionUtil;
 import com.longpc.devmon.portal.quizportal.view.model.AutoAddQuestionViewModel;
-import com.longpc.devmon.portal.quizportal.view.model.CountResultSubmitSubjectModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -129,21 +126,35 @@ public class QuizDetailView extends BaseView {
         hideDialog("dlgCreateQuizSubject");
     }
 
+    // tạo mã hoá
     public void generateQuizSubjectCodes(String quizSubjectId) {
         quizSubjectService.generateCode(quizSubjectId, quizId, SessionUtil.getLoginId());
         quizSubjects = quizSubjectService.getByIds(quiz.getQuizSubjectIds());
     }
 
+    // tao cau hoi phep thu uu tien cap doi
     @SneakyThrows
     public void addQuestionCompareQuizSubject() {
         if (ObjectUtils.isEmpty(quizSubjects)) {
             addError("Chưa có mẫu vật");
             return;
         }
-        quizService.removeAllQuestionTemplate(quizId);
-        Map<String, String> codes = new HashMap();
-        Map<String, String> names = new HashMap();
-        quizService.generateQuestionForPairSurvey(quizId, "");
+        // xoa question cũ
+        quizService.generateQuestionForSurvey(quizId, TypeEnum.QuizProcessType.PAIR, SessionUtil.getLoginId());
+        quiz = quizService.getById(quizId);
+        if (!ObjectUtils.isEmpty(quizSubmits)) {
+            quizSubmitService.remove(quizSubmits.stream().map(QuizSubmit::getId).collect(Collectors.toList()));
+            quizSubmits = quizSubmitService.getByQuizId(quizId);
+        }
+    }
+
+    // tao cau hoi phep tu tam giac
+    public void generateQuestionForSurvey() {
+        if (ObjectUtils.isEmpty(quizSubjects)) {
+            addError("Chưa có mẫu vật");
+            return;
+        }
+        quizService.generateQuestionForSurvey(quizId, TypeEnum.QuizProcessType.valueOf(quiz.getProcessType()), SessionUtil.getLoginId());
         quiz = quizService.getById(quizId);
         if (!ObjectUtils.isEmpty(quizSubmits)) {
             quizSubmitService.remove(quizSubmits.stream().map(QuizSubmit::getId).collect(Collectors.toList()));

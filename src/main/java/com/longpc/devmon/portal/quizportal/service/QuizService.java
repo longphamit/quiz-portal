@@ -55,7 +55,7 @@ public interface QuizService {
 
     void removeAllQuestionTemplate(String quizId);
 
-    void generateQuestionForPairSurvey(String quizId, String performerId);
+    void generateQuestionForSurvey(String quizId, TypeEnum.QuizProcessType quizProcessType, String performerId);
 
     List<Quiz> getByCreatedPartyId(String performerId);
 }

@@ -4,7 +4,9 @@ import com.longpc.devmon.portal.quizportal.entity.quiz.QuizSubject;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +21,9 @@ public class QuizSubjectManager extends BaseManager<QuizSubject> {
     }
 
     public List<QuizSubject> getByIds(List<String> ids) {
+        if(ObjectUtils.isEmpty(ids)){
+            return new ArrayList<>();
+        }
         return mongoTemplate.find(Query.query(Criteria.where("_id").in(ids)), QuizSubject.class);
     }
 }

@@ -1,5 +1,6 @@
 package com.longpc.devmon.portal.quizportal.gateway;
 
+import com.longpc.devmon.portal.quizportal.constant.TypeEnum;
 import com.longpc.devmon.portal.quizportal.entity.Party;
 import com.longpc.devmon.portal.quizportal.entity.quiz.Quiz;
 import com.longpc.devmon.portal.quizportal.entity.quiz.QuizSubject;
@@ -78,9 +79,18 @@ public class QuizGateway {
         }
     }
 
+    @GetMapping("{id}/quiz-subject/{quizSubjectId}/code/generate")
+    public QuizSubject createQuizSubjectByQuizId(
+            @PathVariable("id") String quizId,
+            @PathVariable("quizSubjectId") String quizSubjectId) {
+        quizSubjectService.generateCode(quizSubjectId, quizId, SessionUtil.getLoginId());
+        return quizSubjectService.getById(quizSubjectId);
+    }
+
     @GetMapping("{id}/question/generate")
     public Quiz generateQuestion(@PathVariable("id") String id) {
-        quizService.generateQuestionForPairSurvey(id, SessionUtil.getLoginId());
+        Quiz quiz = quizService.getById(id);
+        quizService.generateQuestionForSurvey(id, TypeEnum.QuizProcessType.valueOf(quiz.getProcessType()), SessionUtil.getLoginId());
         return quizService.getById(id);
     }
 

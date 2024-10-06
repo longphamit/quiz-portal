@@ -18,14 +18,19 @@ public interface QuestionTemplateService {
 
     QuestionTemplate generateById(String id, TypeEnum.Question type, String performerId);
 
-    List<QuestionTemplate> generateById(String id,
-                                        boolean isReverse,
-                                        TypeEnum.Question type,
-                                        TypeEnum.QuizProcessType processType,
-                                        Map<String, String> codes,
-                                        Map<String, String> names,
-                                        List<QuizSubject> quizSubjects,
-                                        String performerId);
+
+
+    List<QuestionTemplate> generatePairById(
+            String quizId,
+            List<QuizSubject> quizSubjects,
+            int participantsLimit,
+            String performerId);
+
+    List<QuestionTemplate> generateTriangleById(
+            String quizId,
+            List<QuizSubject> quizSubjects,
+            int participantsLimit,
+            String performerId);
 
     void updateContent(String id, String content, String performerId);
 
