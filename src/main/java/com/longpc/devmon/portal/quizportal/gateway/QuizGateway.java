@@ -127,7 +127,7 @@ public class QuizGateway {
     @GetMapping("{id}/survey/generate")
     public List<QuizSubmit> generateSurvey(@PathVariable("id") String quizId) {
         Quiz quiz = quizService.getById(quizId);
-        List<QuizSubmit> quizSubmits = quizSubmitService.generateSurveyTypePair(quizId, quiz.getQuestionTemplates(), surveyHost + "/survey/submit");
+        List<QuizSubmit> quizSubmits = quizSubmitService.generateSurvey(quizId, quiz.getQuestionTemplates(), surveyHost + "/survey/submit");
         quizSubmitService.add(quizSubmits, SessionUtil.getLoginId());
         return quizSubmits;
     }
@@ -160,5 +160,12 @@ public class QuizGateway {
             countResultSubjectCodesPairModels.add(countResultSubjectCodesPairModel);
         }
         return countResultSubjectCodesPairModels;
+    }
+
+    @GetMapping("{id}/sync-url-qr")
+    public void updateQr(@PathVariable("id") String quizId,
+                         @RequestParam("url") String url
+    ) {
+        quizSubmitService.syncURLQR(quizId, url);
     }
 }

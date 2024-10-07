@@ -164,7 +164,7 @@ public class QuizDetailView extends BaseView {
 
 
     public void addQuizSubmit() {
-        quizSubmits = quizSubmitService.generateSurveyTypePair(quizId, quiz.getQuestionTemplates(), surveyHost + "/survey/submit");
+        quizSubmits = quizSubmitService.generateSurvey(quizId, quiz.getQuestionTemplates(), surveyHost + "/survey/submit");
         quizSubmitService.add(quizSubmits, SessionUtil.getLoginId());
     }
 

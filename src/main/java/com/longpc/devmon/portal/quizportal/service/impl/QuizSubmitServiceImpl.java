@@ -33,7 +33,7 @@ public class QuizSubmitServiceImpl implements QuizSubmitService {
     private QuizSubmitManager quizSubmitManager;
 
     @SneakyThrows
-    public List<QuizSubmit> generateSurveyTypePair(String quizId, List<QuestionTemplate> questionTemplates, String url) {
+    public List<QuizSubmit> generateSurvey(String quizId, List<QuestionTemplate> questionTemplates, String url) {
         List<QuizSubmit> quizSubmits = new ArrayList<>();
         for (int i = 0; i < questionTemplates.size(); i++) {
             QuizSubmit quizSubmit = new QuizSubmit();
@@ -54,6 +54,19 @@ public class QuizSubmitServiceImpl implements QuizSubmitService {
         }
         return quizSubmits;
     }
+
+    @SneakyThrows
+    public void syncURLQR(String quizId, String url) {
+        List<QuizSubmit> quizSubmits = quizSubmitManager.getByQuizId(quizId);
+        for (QuizSubmit quizSubmit : quizSubmits) {
+            QR qr = new QR();
+            qr.setUrl(url + "/" + quizSubmit.getId());
+            qr.setImage(DataUtil.generateQRCodeImage(url + "/" + quizSubmit.getId()));
+            quizSubmit.setQr(qr);
+            quizSubmitManager.updateAttribute(quizSubmit.getId(), "qr", qr,quizSubmit.getCreatedBy());
+        }
+    }
+
 
     @Override
     public QuizSubmit getById(String id) {

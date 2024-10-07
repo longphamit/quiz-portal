@@ -11,7 +11,7 @@ import java.util.List;
  * 28/03/2024| 15:44 | 2024
  **/
 public interface QuizSubmitService {
-    List<QuizSubmit> generateSurveyTypePair(String quizId, List<QuestionTemplate> questionTemplates, String url);
+    List<QuizSubmit> generateSurvey(String quizId, List<QuestionTemplate> questionTemplates, String url);
 
     QuizSubmit getById(String id);
 
@@ -26,4 +26,6 @@ public interface QuizSubmitService {
     long countByQuizIdAndSubjectCodes(String quizId, List<String> subjectCodes);
 
     void remove(List<String> ids);
+
+    void syncURLQR(String quizId, String url);
 }
