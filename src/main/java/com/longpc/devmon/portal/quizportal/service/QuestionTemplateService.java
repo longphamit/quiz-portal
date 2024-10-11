@@ -32,6 +32,12 @@ public interface QuestionTemplateService {
             int participantsLimit,
             String performerId);
 
+    List<QuestionTemplate> generate3AFCById(
+            String quizId,
+            List<QuizSubject> quizSubjects,
+            int participantsLimit,
+            String performerId);
+
     void updateContent(String id, String content, String performerId);
 
     void updateAnswerContent(String id, String answerId, String content, String performerId);

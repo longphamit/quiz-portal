@@ -162,6 +162,12 @@ public class QuizServiceImpl implements QuizService {
 
                 break;
             case AFC_3:
+                questionTemplates = questionTemplateService.generate3AFCById(
+                        quizId,
+                        quizSubjects,
+                        quiz.getParticipantsLimit(),
+                        performerId);
+                break;
             case TRIANGLE:
                 questionTemplates = questionTemplateService.generateTriangleById(
                         quizId,

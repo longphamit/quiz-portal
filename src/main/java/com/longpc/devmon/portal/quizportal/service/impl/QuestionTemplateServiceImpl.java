@@ -154,6 +154,29 @@ public class QuestionTemplateServiceImpl implements QuestionTemplateService {
         return generateQuestion(quizId, TypeEnum.Question.RADIO, quizSubjects, PERMUTAION_TRIANGLE, participantsNumber, performerId);
     }
 
+    @Override
+    public List<QuestionTemplate> generate3AFCById(String quizId, List<QuizSubject> quizSubjects, int participantsNumber, String performerId) {
+        List<QuestionTemplate> rs = generateQuestion(quizId, TypeEnum.Question.RADIO, quizSubjects, PERMUTAION_TRIANGLE, participantsNumber, performerId);
+        // sap sep phan vung 2 ben 1 vung aab,baa, aba 1 vung bba, bab, abb
+        Map<String, List<QuestionTemplate>> phanVungMap = new LinkedHashMap<>();
+        //
+        for (QuizSubject quizSubject : quizSubjects) {
+            String key = quizSubject.getKey();
+            phanVungMap.put(key, new ArrayList<>());
+            for (QuestionTemplate questionTemplate : rs) {
+                long count = questionTemplate.getContent().chars().filter(ch -> Character.toString(ch).equals(key)).count();
+                if (count == 2) {
+                    phanVungMap.get(key).add(questionTemplate);
+                }
+            }
+        }
+        List<QuestionTemplate> rs2 = new ArrayList<>();
+        for (Map.Entry<String, List<QuestionTemplate>> entry : phanVungMap.entrySet()) {
+            rs2.addAll(entry.getValue());
+        }
+        return rs2;
+    }
+
 
     @Override
     public void updateContent(String id, String content, String performerId) {
