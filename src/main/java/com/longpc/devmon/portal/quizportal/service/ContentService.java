@@ -32,4 +32,26 @@ public class ContentService {
     public List<Content> getByReferTypeAndReferId(String referType, String referId) {
         return contentManager.getByReferTypeAndReferId(referType, referId);
     }
+
+    public Content geByQuizIdAndGuideIndex(String quizId, int guideIndex) {
+        List<Content> contents = contentManager.getByReferTypeAndReferId("QUIZ", quizId);
+        int flag = 0;
+        Content rs = null;
+        for (int i = 0; i < contents.size() && flag == 0; i++) {
+            if (contents.get(i).getStartGuideIndex() <= guideIndex && contents.get(i).getEndGuideIndex() >= guideIndex) {
+                flag = 1;
+                rs = contents.get(i);
+            }
+        }
+        return rs;
+    }
+    public void updateStartGuideIndex(String id, int startGuideIndex, String updatedBy) {
+        contentManager.updateAttribute(id, "startGuideIndex", startGuideIndex, updatedBy);
+    }
+    public void updateEndGuideIndex(String id, int endGuideIndex, String updatedBy) {
+        contentManager.updateAttribute(id, "endGuideIndex", endGuideIndex, updatedBy);
+    }
+    public void deleteContent(String id) {
+        contentManager.delete(id);
+    }
 }

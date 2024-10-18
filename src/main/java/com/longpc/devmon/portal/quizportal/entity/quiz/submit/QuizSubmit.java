@@ -25,4 +25,5 @@ public class QuizSubmit extends BaseEntity {
     private QR qr;
     private String guideId;
     private int status;
+    private int index;
 }

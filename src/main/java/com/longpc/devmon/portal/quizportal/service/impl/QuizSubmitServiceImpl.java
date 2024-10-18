@@ -44,6 +44,7 @@ public class QuizSubmitServiceImpl implements QuizSubmitService {
         for (int i = 0; i < questionTemplates.size(); i++) {
             QuizSubmit quizSubmit = new QuizSubmit();
             quizSubmit.setId(DataUtil.generateId());
+            quizSubmit.setIndex(i + 1);
             quizSubmit.setQuizId(quizId);
             QuestionAnswerSubmit questionAnswerSubmit = new QuestionAnswerSubmit();
             questionAnswerSubmit.setQuestionTemplateId(questionTemplates.get(i).getId());
@@ -58,17 +59,6 @@ public class QuizSubmitServiceImpl implements QuizSubmitService {
             //
             quizSubmits.add(quizSubmit);
         }
-        List<Content> contents = contentManager.getByReferTypeAndReferId("QUIZ", quizId);
-        if (!ObjectUtils.isEmpty(contents) && !ObjectUtils.isEmpty(quizSubmits)) {
-            for (Content content : contents) {
-                for (int i = 0; i < quizSubmits.size(); i++) {
-                    if (i >= content.getStartGuideIndex() - 1 && i <= content.getEndGuideIndex() - 1) {
-                        quizSubmits.get(i).setGuideId(content.getId());
-                    }
-                }
-            }
-        }
-
         return quizSubmits;
     }
 

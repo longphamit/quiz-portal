@@ -22,4 +22,8 @@ public class ContentManager extends BaseManager {
         return mongoTemplate.find(Query.query(Criteria.where("referType").is(referType).and("referId").is(referId)), Content.class, this.collectionName);
     }
 
+    public void delete(String id) {
+        mongoTemplate.remove(Query.query(Criteria.where("_id").is(id)), Content.class);
+    }
+
 }
