@@ -128,6 +128,14 @@ public class QuizGateway {
     public List<QuizSubmit> generateSurvey(@PathVariable("id") String quizId) {
         Quiz quiz = quizService.getById(quizId);
         List<QuizSubmit> quizSubmits = quizSubmitService.generateSurvey(quizId, quiz.getQuestionTemplates(), surveyHost + "/survey/submit");
+        List<QuizSubmit> existedQuizSubmits = quizSubmitService.getByQuizId(quizId);
+        if (!ObjectUtils.isEmpty(existedQuizSubmits)) {
+            List<String> quizSubmitExistedIds = new ArrayList<>();
+            for (QuizSubmit existedQuizSubmit : existedQuizSubmits) {
+                quizSubmitExistedIds.add(existedQuizSubmit.getId());
+            }
+            quizSubmitService.remove(quizSubmitExistedIds);
+        }
         quizSubmitService.add(quizSubmits, SessionUtil.getLoginId());
         return quizSubmits;
     }
