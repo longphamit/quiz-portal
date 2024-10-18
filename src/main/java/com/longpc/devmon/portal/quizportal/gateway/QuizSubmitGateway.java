@@ -48,4 +48,6 @@ public class QuizSubmitGateway {
         quizSubmitService.submit(quizSubmit);
         return quizSubmitService.getById(quizSubmit.getId());
     }
+
+
 }

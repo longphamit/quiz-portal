@@ -23,5 +23,6 @@ public class QuizSubmit extends BaseEntity {
     private Date submitTime;
     private List<QuestionAnswerSubmit> questionAnswerSubmits;
     private QR qr;
+    private String guideId;
     private int status;
 }

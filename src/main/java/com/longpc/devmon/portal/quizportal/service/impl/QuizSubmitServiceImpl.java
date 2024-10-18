@@ -2,12 +2,14 @@ package com.longpc.devmon.portal.quizportal.service.impl;
 
 import com.longpc.devmon.portal.quizportal.constant.StatusEnum;
 import com.longpc.devmon.portal.quizportal.constant.TypeEnum;
+import com.longpc.devmon.portal.quizportal.entity.quiz.Content;
 import com.longpc.devmon.portal.quizportal.entity.quiz.QR;
 import com.longpc.devmon.portal.quizportal.entity.quiz.QuestionAnswerTemplate;
 import com.longpc.devmon.portal.quizportal.entity.quiz.submit.QuestionAnswerSubmit;
 import com.longpc.devmon.portal.quizportal.entity.quiz.submit.QuestionTemplate;
 import com.longpc.devmon.portal.quizportal.entity.quiz.submit.QuizSubmit;
 import com.longpc.devmon.portal.quizportal.exception.QuizSubmittedException;
+import com.longpc.devmon.portal.quizportal.manager.ContentManager;
 import com.longpc.devmon.portal.quizportal.manager.QuizSubmitManager;
 import com.longpc.devmon.portal.quizportal.service.QuizSubmitService;
 import com.longpc.devmon.portal.quizportal.util.DataUtil;
@@ -16,6 +18,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +34,9 @@ import java.util.List;
 public class QuizSubmitServiceImpl implements QuizSubmitService {
     @Autowired
     private QuizSubmitManager quizSubmitManager;
+
+    @Autowired
+    private ContentManager contentManager;
 
     @SneakyThrows
     public List<QuizSubmit> generateSurvey(String quizId, List<QuestionTemplate> questionTemplates, String url) {
@@ -52,6 +58,17 @@ public class QuizSubmitServiceImpl implements QuizSubmitService {
             //
             quizSubmits.add(quizSubmit);
         }
+        List<Content> contents = contentManager.getByReferTypeAndReferId("QUIZ", quizId);
+        if (!ObjectUtils.isEmpty(contents) && !ObjectUtils.isEmpty(quizSubmits)) {
+            for (Content content : contents) {
+                for (int i = 0; i < quizSubmits.size(); i++) {
+                    if (i >= content.getStartGuideIndex() - 1 && i <= content.getEndGuideIndex() - 1) {
+                        quizSubmits.get(i).setGuideId(content.getId());
+                    }
+                }
+            }
+        }
+
         return quizSubmits;
     }
 
@@ -63,7 +80,7 @@ public class QuizSubmitServiceImpl implements QuizSubmitService {
             qr.setUrl(url + "/" + quizSubmit.getId());
             qr.setImage(DataUtil.generateQRCodeImage(url + "/" + quizSubmit.getId()));
             quizSubmit.setQr(qr);
-            quizSubmitManager.updateAttribute(quizSubmit.getId(), "qr", qr,quizSubmit.getCreatedBy());
+            quizSubmitManager.updateAttribute(quizSubmit.getId(), "qr", qr, quizSubmit.getCreatedBy());
         }
     }
 

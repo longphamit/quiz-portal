@@ -26,4 +26,6 @@ public class Quiz extends BaseEntity {
     private List<String> quizSubjectIds;
     private String guide;
     private int participantsLimit = 0;
+    private String version;
+    private List<String> guideIds;
 }
